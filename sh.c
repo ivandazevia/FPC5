@@ -157,6 +157,7 @@ main(void)
 
   // Read and run input commands.
   while(getcmd(buf, sizeof(buf)) >= 0){
+
     if(buf[0] == 'c' && buf[1] == 'd' && buf[2] == ' '){
       // Chdir must be called by the parent, not the child.
       buf[strlen(buf)-1] = 0;  // chop \n
@@ -164,8 +165,16 @@ main(void)
         printf(2, "cannot cd %s\n", buf+3);
       continue;
     }
+    int i;
+    int length=strlen(buf);
+    char *newbuf=(char*)malloc(length+1);
+    newbuf[0]='/';
+    for (i = 1; i < length+1; i++){
+      newbuf[i]=buf[i-1];  
+    }
+
     if(fork1() == 0)
-      runcmd(parsecmd(buf));
+      runcmd(parsecmd(newbuf));
     wait();
   }
   exit();
